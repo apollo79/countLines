@@ -41,7 +41,7 @@ export class CountLinesMainCommand extends Line.MainCommand {
 
         return (
             ignoreEmptyLines
-                ? lines.filter((line) => !line.match(/^\s*$/))
+                ? lines.filter((line) => line.trim() !== "")
                 : lines
         ).length;
     }
