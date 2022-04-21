@@ -40,9 +40,7 @@ export class CountLinesMainCommand extends Line.MainCommand {
         const lines = file.split(/\r?\n|\r/g);
 
         return (
-            ignoreEmptyLines
-                ? lines.filter((line) => line.trim() !== "")
-                : lines
+            ignoreEmptyLines ? lines.filter((line) => !line.trim()) : lines
         ).length;
     }
 
@@ -59,10 +57,12 @@ export class CountLinesMainCommand extends Line.MainCommand {
         for await (const entry of Deno.readDir(path)) {
             if (
                 !ignorePattern ||
-                !(ignorePattern && entry.name.match(ignorePattern))
+                !ignorePattern.test(entry.name)
             ) {
+                const fileName = `${path}/${entry.name}`;
+
                 if (entry.isFile) {
-                    const file = await Deno.readFile(`${path}/${entry.name}`);
+                    const file = await Deno.readFile(fileName);
 
                     number += this.countLinesOfFile(
                         decoder.decode(file),
@@ -70,7 +70,7 @@ export class CountLinesMainCommand extends Line.MainCommand {
                     );
                 } else if (entry.isDirectory && !ignoreSubDirs) {
                     number += await this.countLinesInDirectory(
-                        `${path}/${entry.name}`,
+                        fileName,
                         ignoreSubDirs,
                         ignoreEmptyLines,
                         ignorePattern,
