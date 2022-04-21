@@ -40,7 +40,7 @@ export class CountLinesMainCommand extends Line.MainCommand {
         const lines = file.split(/\r?\n|\r/g);
 
         return (
-            ignoreEmptyLines ? lines.filter((line) => !line.trim()) : lines
+            ignoreEmptyLines ? lines.filter((line) => !!line.trim()) : lines
         ).length;
     }
 
